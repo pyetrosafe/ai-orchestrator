@@ -1,7 +1,5 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "default_agent": "orchestrator",
-  "small_model": "ollama/gemma4:e4b#fast",
   "providers": {
     "ollama": {
       "name": "Ollama",
@@ -14,7 +12,29 @@
             "tools": true
           },
           "limit": {
-            "context": 65536,
+            "context": 32768,
+            "output": 16384
+          },
+          "body": {
+            "think": true
+          },
+          "variants": [
+            {
+              "id": "fast",
+              "body": {
+                "temperature": 0.1,
+                "think": false
+              }
+            }
+          ]
+        },
+        "qwen3.5:9b": {
+          "name": "Qwen 3.5 9B",
+          "capabilities": {
+            "tools": true
+          },
+          "limit": {
+            "context": 32768,
             "output": 16384
           },
           "body": {
@@ -36,7 +56,7 @@
             "tools": true
           },
           "limit": {
-            "context": 65536,
+            "context": 32768,
             "output": 16384
           },
           "body": {
@@ -52,14 +72,14 @@
             }
           ]
         },
-        "deepseek-r1:8b": {
-          "name": "DeepSeek R1 8B",
+        "gemma4:12b": {
+          "name": "Gemma 4 12B",
           "capabilities": {
             "tools": true
           },
           "limit": {
-            "context": 65536,
-            "output": 32768
+            "context": 32768,
+            "output": 16384
           },
           "body": {
             "think": true
@@ -79,14 +99,9 @@
   },
   "agents": {
     "orchestrator": {
-      "description": "Cloud analyst and orchestrator. Plans and decomposes work into sequential microtasks, and audits the local executor.",
+      "description": "Cloud analyst and orchestrator. Plans work, decomposes it into sequential microtasks, and audits the local executor.",
       "mode": "primary",
       "permissions": [
-        {
-          "action": "execute",
-          "resource": "*",
-          "effect": "deny"
-        },
         {
           "action": "edit",
           "resource": "*",
@@ -96,6 +111,41 @@
           "action": "shell",
           "resource": "*",
           "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git status *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git diff *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git log *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm test *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run lint *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "npm run build *",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "pytest *",
+          "effect": "allow"
         },
         {
           "action": "subagent",
@@ -110,16 +160,11 @@
       ]
     },
     "local-worker": {
-      "description": "Lightweight local executor. Executes one microtask at a time and returns a standardized status.",
+      "description": "Lean local executor. Executes one microtask at a time and returns a standardized status.",
       "mode": "subagent",
-      "model": "ollama/gemma4:e4b#fast",
-      "steps": 15,
+      "model": "ollama/qwen3.5:9b#fast",
+      "steps": 30,
       "permissions": [
-        {
-          "action": "execute",
-          "resource": "*",
-          "effect": "deny"
-        },
         {
           "action": "edit",
           "resource": "*",
@@ -129,6 +174,16 @@
           "action": "shell",
           "resource": "*",
           "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "git push *",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "git reset --hard *",
+          "effect": "deny"
         },
         {
           "action": "subagent",

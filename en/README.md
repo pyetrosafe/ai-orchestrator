@@ -10,7 +10,7 @@ The GPU is used sequentially: the worker never receives two microtasks in parall
 
 ## How the workflow works
 
-1. `/orquestrar <request>` sends the request to the primary `orchestrator` agent.
+1. `/orchestrate <request>` sends the request to the primary `orchestrator` agent.
 2. The orchestrator performs the minimum necessary reading and creates a plan of tasks, subtasks, and microtasks.
 3. Each microtask is delegated to `local-worker` one at a time.
 4. The worker changes only the authorized scope, runs a validation, and writes the final contract to `last-result.md`.
@@ -40,7 +40,7 @@ SUGGESTED_NEXT_STEP
 │   ├── orchestrator.md               # Primary Cloud agent
 │   └── local-worker.md               # Local Ollama executor
 ├── commands/
-│   └── orquestrar.md                 # Command that starts the hybrid workflow
+│   └── orchestrate.md                # Command that starts the hybrid workflow
 ```
 
 The global directory used by OpenCode is normally `~/.config/opencode/`. On Windows, it corresponds to `C:\Users\<user>\.config\opencode\`.
@@ -55,7 +55,7 @@ your-project/
     │   ├── orchestrator.md
     │   └── local-worker.md
     ├── commands/
-    │   └── orquestrar.md
+    │   └── orchestrate.md
     └── state/
         └── last-result.md
 ```
@@ -117,7 +117,7 @@ opencode
 Select the `orchestrator` agent or run it directly:
 
 ```text
-/orquestrar Implement CPF validation in the registration form and add unit tests.
+/orchestrate Implement CPF validation in the registration form and add unit tests.
 ```
 
 OpenCode will present the plan before delegations. The local executor will respond in a short, objective format, without detailed reasoning or long logs.
@@ -195,6 +195,6 @@ Analyzing some of the models available in Ollama:
 
 - Adjust the Cloud agent in `agents/orchestrator.md`.
 - Adjust the local worker behavior in `agents/local-worker.md`.
-- Adjust the command text and workflow in `commands/orquestrar.md`.
+- Adjust the command text and workflow in `commands/orchestrate.md`.
 - Adjust models, context limits, variants, and permissions in `opencode.json`.
 - Adjust the CLI appearance and behavior in `cli.json`.
